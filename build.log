@@ -1,0 +1,195 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------< com.example:MENTAL_HEALTH_BST_PRO_2 >-----------------
+[INFO] Building MENTAL_HEALTH_BST_PRO_2 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ MENTAL_HEALTH_BST_PRO_2 ---
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] Copying 3 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ MENTAL_HEALTH_BST_PRO_2 ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 14 source files with javac [debug parameters release 17] to target\classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Appointment.java:[4,14] package lombok does not exist
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Appointment.java:[5,14] package lombok does not exist
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Appointment.java:[6,14] package lombok does not exist
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Appointment.java:[10,2] cannot find symbol
+  symbol: class Data
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Appointment.java:[11,2] cannot find symbol
+  symbol: class NoArgsConstructor
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Appointment.java:[12,2] cannot find symbol
+  symbol: class AllArgsConstructor
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/User.java:[4,14] package lombok does not exist
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/User.java:[5,14] package lombok does not exist
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/User.java:[6,14] package lombok does not exist
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/User.java:[9,2] cannot find symbol
+  symbol: class Data
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/User.java:[10,2] cannot find symbol
+  symbol: class NoArgsConstructor
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/User.java:[11,2] cannot find symbol
+  symbol: class AllArgsConstructor
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Assessment.java:[4,14] package lombok does not exist
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Assessment.java:[5,14] package lombok does not exist
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Assessment.java:[6,14] package lombok does not exist
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Assessment.java:[10,2] cannot find symbol
+  symbol: class Data
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Assessment.java:[11,2] cannot find symbol
+  symbol: class NoArgsConstructor
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Assessment.java:[12,2] cannot find symbol
+  symbol: class AllArgsConstructor
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Resource.java:[4,14] package lombok does not exist
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Resource.java:[5,14] package lombok does not exist
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Resource.java:[6,14] package lombok does not exist
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Resource.java:[9,2] cannot find symbol
+  symbol: class Data
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Resource.java:[10,2] cannot find symbol
+  symbol: class NoArgsConstructor
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Resource.java:[11,2] cannot find symbol
+  symbol: class AllArgsConstructor
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/AppointmentController.java:[37,33] cannot find symbol
+  symbol:   method getUser()
+  location: variable updated of type com.example.mentalhealth.model.Appointment
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/AppointmentController.java:[38,38] cannot find symbol
+  symbol:   method getCounselor()
+  location: variable updated of type com.example.mentalhealth.model.Appointment
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/AppointmentController.java:[39,37] cannot find symbol
+  symbol:   method getDateTime()
+  location: variable updated of type com.example.mentalhealth.model.Appointment
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/AppointmentController.java:[40,35] cannot find symbol
+  symbol:   method getStatus()
+  location: variable updated of type com.example.mentalhealth.model.Appointment
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/AssessmentController.java:[37,33] cannot find symbol
+  symbol:   method getUser()
+  location: variable updated of type com.example.mentalhealth.model.Assessment
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/AssessmentController.java:[38,33] cannot find symbol
+  symbol:   method getDate()
+  location: variable updated of type com.example.mentalhealth.model.Assessment
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/AssessmentController.java:[39,34] cannot find symbol
+  symbol:   method getScore()
+  location: variable updated of type com.example.mentalhealth.model.Assessment
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/AssessmentController.java:[40,36] cannot find symbol
+  symbol:   method getAnswers()
+  location: variable updated of type com.example.mentalhealth.model.Assessment
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/ResourceController.java:[37,34] cannot find symbol
+  symbol:   method getTitle()
+  location: variable updated of type com.example.mentalhealth.model.Resource
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/ResourceController.java:[38,32] cannot find symbol
+  symbol:   method getUrl()
+  location: variable updated of type com.example.mentalhealth.model.Resource
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/ResourceController.java:[39,37] cannot find symbol
+  symbol:   method getCategory()
+  location: variable updated of type com.example.mentalhealth.model.Resource
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/ResourceController.java:[40,40] cannot find symbol
+  symbol:   method getDescription()
+  location: variable updated of type com.example.mentalhealth.model.Resource
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/UserController.java:[35,37] cannot find symbol
+  symbol:   method getName()
+  location: variable updatedUser of type com.example.mentalhealth.model.User
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/UserController.java:[36,38] cannot find symbol
+  symbol:   method getEmail()
+  location: variable updatedUser of type com.example.mentalhealth.model.User
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/UserController.java:[37,37] cannot find symbol
+  symbol:   method getRole()
+  location: variable updatedUser of type com.example.mentalhealth.model.User
+[INFO] 39 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  7.491 s
+[INFO] Finished at: 2025-12-07T12:44:50+02:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.14.1:compile (default-compile) on project MENTAL_HEALTH_BST_PRO_2: Compilation failure: Compilation failure: 
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Appointment.java:[4,14] package lombok does not exist
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Appointment.java:[5,14] package lombok does not exist
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Appointment.java:[6,14] package lombok does not exist
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Appointment.java:[10,2] cannot find symbol
+[ERROR]   symbol: class Data
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Appointment.java:[11,2] cannot find symbol
+[ERROR]   symbol: class NoArgsConstructor
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Appointment.java:[12,2] cannot find symbol
+[ERROR]   symbol: class AllArgsConstructor
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/User.java:[4,14] package lombok does not exist
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/User.java:[5,14] package lombok does not exist
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/User.java:[6,14] package lombok does not exist
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/User.java:[9,2] cannot find symbol
+[ERROR]   symbol: class Data
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/User.java:[10,2] cannot find symbol
+[ERROR]   symbol: class NoArgsConstructor
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/User.java:[11,2] cannot find symbol
+[ERROR]   symbol: class AllArgsConstructor
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Assessment.java:[4,14] package lombok does not exist
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Assessment.java:[5,14] package lombok does not exist
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Assessment.java:[6,14] package lombok does not exist
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Assessment.java:[10,2] cannot find symbol
+[ERROR]   symbol: class Data
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Assessment.java:[11,2] cannot find symbol
+[ERROR]   symbol: class NoArgsConstructor
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Assessment.java:[12,2] cannot find symbol
+[ERROR]   symbol: class AllArgsConstructor
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Resource.java:[4,14] package lombok does not exist
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Resource.java:[5,14] package lombok does not exist
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Resource.java:[6,14] package lombok does not exist
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Resource.java:[9,2] cannot find symbol
+[ERROR]   symbol: class Data
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Resource.java:[10,2] cannot find symbol
+[ERROR]   symbol: class NoArgsConstructor
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/model/Resource.java:[11,2] cannot find symbol
+[ERROR]   symbol: class AllArgsConstructor
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/AppointmentController.java:[37,33] cannot find symbol
+[ERROR]   symbol:   method getUser()
+[ERROR]   location: variable updated of type com.example.mentalhealth.model.Appointment
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/AppointmentController.java:[38,38] cannot find symbol
+[ERROR]   symbol:   method getCounselor()
+[ERROR]   location: variable updated of type com.example.mentalhealth.model.Appointment
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/AppointmentController.java:[39,37] cannot find symbol
+[ERROR]   symbol:   method getDateTime()
+[ERROR]   location: variable updated of type com.example.mentalhealth.model.Appointment
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/AppointmentController.java:[40,35] cannot find symbol
+[ERROR]   symbol:   method getStatus()
+[ERROR]   location: variable updated of type com.example.mentalhealth.model.Appointment
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/AssessmentController.java:[37,33] cannot find symbol
+[ERROR]   symbol:   method getUser()
+[ERROR]   location: variable updated of type com.example.mentalhealth.model.Assessment
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/AssessmentController.java:[38,33] cannot find symbol
+[ERROR]   symbol:   method getDate()
+[ERROR]   location: variable updated of type com.example.mentalhealth.model.Assessment
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/AssessmentController.java:[39,34] cannot find symbol
+[ERROR]   symbol:   method getScore()
+[ERROR]   location: variable updated of type com.example.mentalhealth.model.Assessment
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/AssessmentController.java:[40,36] cannot find symbol
+[ERROR]   symbol:   method getAnswers()
+[ERROR]   location: variable updated of type com.example.mentalhealth.model.Assessment
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/ResourceController.java:[37,34] cannot find symbol
+[ERROR]   symbol:   method getTitle()
+[ERROR]   location: variable updated of type com.example.mentalhealth.model.Resource
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/ResourceController.java:[38,32] cannot find symbol
+[ERROR]   symbol:   method getUrl()
+[ERROR]   location: variable updated of type com.example.mentalhealth.model.Resource
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/ResourceController.java:[39,37] cannot find symbol
+[ERROR]   symbol:   method getCategory()
+[ERROR]   location: variable updated of type com.example.mentalhealth.model.Resource
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/ResourceController.java:[40,40] cannot find symbol
+[ERROR]   symbol:   method getDescription()
+[ERROR]   location: variable updated of type com.example.mentalhealth.model.Resource
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/UserController.java:[35,37] cannot find symbol
+[ERROR]   symbol:   method getName()
+[ERROR]   location: variable updatedUser of type com.example.mentalhealth.model.User
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/UserController.java:[36,38] cannot find symbol
+[ERROR]   symbol:   method getEmail()
+[ERROR]   location: variable updatedUser of type com.example.mentalhealth.model.User
+[ERROR] /M:/BEST_PROGRAMMING-FINAL_PROJECT/MENTAL_HEALTH_BST_PRO_2/src/main/java/com/example/mentalhealth/controller/UserController.java:[37,37] cannot find symbol
+[ERROR]   symbol:   method getRole()
+[ERROR]   location: variable updatedUser of type com.example.mentalhealth.model.User
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

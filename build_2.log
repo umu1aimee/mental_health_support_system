@@ -1,0 +1,19 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------< com.example:MENTAL_HEALTH_BST_PRO_2 >-----------------
+[INFO] Building MENTAL_HEALTH_BST_PRO_2 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ MENTAL_HEALTH_BST_PRO_2 ---
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] Copying 3 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ MENTAL_HEALTH_BST_PRO_2 ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  4.662 s
+[INFO] Finished at: 2025-12-07T12:46:17+02:00
+[INFO] ------------------------------------------------------------------------

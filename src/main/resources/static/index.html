@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="MindCare Mini - patient, counselor, and admin flows for a modern mental health support system." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <title>MindCare Mini</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <header class="topbar">
+        <div class="topbar-inner">
+            <div class="brand">
+                <div class="brand-mark">MC</div>
+                <div class="brand-name">MindCare Mini</div>
+            </div>
+
+            <nav class="nav" id="marketing-nav">
+                <ul>
+                    <li><a href="#" id="nav-solutions">Solutions</a></li>
+                    <li><a href="#" id="nav-resources">Resources</a></li>
+                    <li><a href="#" id="nav-about">About</a></li>
+                </ul>
+            </nav>
+
+            <div class="topbar-actions">
+                <div class="topbar-actions-public" id="topbar-actions-public">
+                    <a href="#" class="link" id="nav-auth">Login</a>
+                    <button class="btn btn-primary" id="nav-cta">Get started</button>
+                </div>
+                <div class="topbar-actions-auth" id="topbar-actions-auth">
+                    <div id="topbar-profile"></div>
+                    <button class="btn btn-ghost" id="topbar-logout">Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="appnav" id="app-nav">
+            <div class="appnav-inner">
+                <div id="user-status"></div>
+                <nav class="nav">
+                    <ul>
+                        <li><a href="#" id="nav-mood">Mood Tracker</a></li>
+                        <li><a href="#" id="nav-appointments">Appointments</a></li>
+                        <li><a href="#" id="nav-counselor">Counselor</a></li>
+                        <li><a href="#" id="nav-counselor-appts">Counselor Appointments</a></li>
+                        <li><a href="#" id="nav-admin">Admin</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+    <main id="main-content" class="content">
+        <!-- Dynamic content will be injected here by app.js -->
+    </main>
+    <div id="toast-root" class="toast-root"></div>
+    <footer class="footer">
+        <p>&copy; 2025 MindCare Mini</p>
+    </footer>
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
