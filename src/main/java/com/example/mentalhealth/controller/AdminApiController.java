@@ -3,11 +3,13 @@ package com.example.mentalhealth.controller;
 import com.example.mentalhealth.exception.ApiException;
 import com.example.mentalhealth.model.Patient;
 import com.example.mentalhealth.model.User;
+import com.example.mentalhealth.model.ProfileChange;
 import com.example.mentalhealth.repository.AppointmentRepository;
 import com.example.mentalhealth.repository.AvailabilityRepository;
 import com.example.mentalhealth.repository.MoodEntryRepository;
 import com.example.mentalhealth.repository.PatientRepository;
 import com.example.mentalhealth.repository.UserRepository;
+import com.example.mentalhealth.repository.ProfileChangeRepository;
 import com.example.mentalhealth.service.SessionAuthService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
@@ -28,6 +30,7 @@ public class AdminApiController {
     private final MoodEntryRepository moodEntryRepository;
     private final AppointmentRepository appointmentRepository;
     private final AvailabilityRepository availabilityRepository;
+    private final ProfileChangeRepository profileChangeRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     public AdminApiController(SessionAuthService auth,
@@ -36,7 +39,8 @@ public class AdminApiController {
                              MoodEntryRepository moodEntryRepository,
                              AppointmentRepository appointmentRepository,
                              AvailabilityRepository availabilityRepository,
-                             BCryptPasswordEncoder passwordEncoder) {
+                             BCryptPasswordEncoder passwordEncoder,
+                             ProfileChangeRepository profileChangeRepository) {
         this.auth = auth;
         this.userRepository = userRepository;
         this.patientRepository = patientRepository;
@@ -44,6 +48,7 @@ public class AdminApiController {
         this.appointmentRepository = appointmentRepository;
         this.availabilityRepository = availabilityRepository;
         this.passwordEncoder = passwordEncoder;
+        this.profileChangeRepository = profileChangeRepository;
     }
 
     @GetMapping("/users")
@@ -70,6 +75,29 @@ public class AdminApiController {
         user.setRole(User.Role.counselor);
         user.setActive(true);
         user.setPassword(passwordEncoder.encode(req.password));
+        user.setSpecialty(req.specialty);
+        user = userRepository.save(user);
+        return userResponse(user);
+    }
+
+    @PostMapping("/admins")
+    public Map<String, Object> createAdmin(@RequestBody CreateUserRequest req, HttpSession session) {
+        auth.requireRole(session, User.Role.admin);
+        if (req == null || req.email == null || req.email.isBlank() || req.password == null || req.password.isBlank()) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Email and password are required");
+        }
+
+        String normalizedEmail = req.email.trim().toLowerCase();
+        if (userRepository.findByEmail(normalizedEmail).isPresent()) {
+            throw new ApiException(HttpStatus.CONFLICT, "Email already registered");
+        }
+
+        User user = new User();
+        user.setEmail(normalizedEmail);
+        user.setName(req.name);
+        user.setRole(User.Role.admin);
+        user.setActive(true);
+        user.setPassword(passwordEncoder.encode(req.password));
         user = userRepository.save(user);
         return userResponse(user);
     }
@@ -94,6 +122,34 @@ public class AdminApiController {
         }
         User user = userRepository.findById(id).orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "User not found"));
         user.setActive(req.active);
+        user = userRepository.save(user);
+        return userResponse(user);
+    }
+
+    @PutMapping("/users/{id}")
+    public Map<String, Object> updateUser(@PathVariable Long id, @RequestBody UpdateUserRequest req, HttpSession session) {
+        auth.requireRole(session, User.Role.admin);
+        if (req == null) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Request body is required");
+        }
+        User user = userRepository.findById(id).orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "User not found"));
+        
+        if (req.name != null) {
+            user.setName(req.name.trim());
+        }
+        if (req.email != null && !req.email.isBlank()) {
+            String normalizedEmail = req.email.trim().toLowerCase();
+            // Check if email is already used by another user
+            var existing = userRepository.findByEmail(normalizedEmail);
+            if (existing.isPresent() && !existing.get().getId().equals(id)) {
+                throw new ApiException(HttpStatus.CONFLICT, "Email already in use");
+            }
+            user.setEmail(normalizedEmail);
+        }
+        if (req.specialty != null) {
+            user.setSpecialty(req.specialty.trim());
+        }
+        
         user = userRepository.save(user);
         return userResponse(user);
     }
@@ -126,15 +182,39 @@ public class AdminApiController {
         return Map.of("ok", true);
     }
 
+    @GetMapping("/profile-changes")
+    public List<Map<String, Object>> recentProfileChanges(HttpSession session) {
+        auth.requireRole(session, User.Role.admin);
+        return profileChangeRepository.findTop20ByOrderByCreatedAtDesc()
+                .stream()
+                .map(this::profileChangeResponse)
+                .toList();
+    }
+
     private Map<String, Object> userResponse(User user) {
         Map<String, Object> resp = new LinkedHashMap<>();
         resp.put("id", user.getId());
         resp.put("email", user.getEmail());
         resp.put("name", user.getName());
         resp.put("role", user.getRole());
+        resp.put("specialty", user.getSpecialty());
         resp.put("active", user.isActive());
         resp.put("createdAt", user.getCreatedAt());
         return resp;
+    }
+
+    private Map<String, Object> profileChangeResponse(ProfileChange change) {
+        Map<String, Object> m = new LinkedHashMap<>();
+        m.put("id", change.getId());
+        m.put("description", change.getDescription());
+        m.put("createdAt", change.getCreatedAt());
+        if (change.getUser() != null) {
+            m.put("userId", change.getUser().getId());
+            m.put("userEmail", change.getUser().getEmail());
+            m.put("userName", change.getUser().getName());
+            m.put("userRole", change.getUser().getRole());
+        }
+        return m;
     }
 
     public static class ChangeRoleRequest {
@@ -149,5 +229,12 @@ public class AdminApiController {
         public String email;
         public String password;
         public String name;
+        public String specialty;
+    }
+
+    public static class UpdateUserRequest {
+        public String email;
+        public String name;
+        public String specialty;
     }
 }
