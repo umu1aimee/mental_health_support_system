@@ -182,6 +182,7 @@ public class PatientApiController {
         m.put("name", user.getName());
         m.put("email", user.getEmail());
         m.put("role", user.getRole());
+        m.put("specialty", user.getSpecialty());
         return m;
     }
 
