@@ -2,6 +2,7 @@ import { api } from '../api.js';
 import { state } from '../state.js';
 import { escapeHtml, renderMain, renderError, requireRole, toast } from '../ui.js';
 import { moodChart } from '../components.js';
+import { navigate } from '../router.js';
 
 function includesText(haystack, needle) {
   const h = (haystack ?? '').toString().toLowerCase();
@@ -12,44 +13,33 @@ function includesText(haystack, needle) {
 
 function toDayName(dayOfWeek) {
   switch (Number(dayOfWeek)) {
-    case 0: return 'Sunday';
-    case 1: return 'Monday';
-    case 2: return 'Tuesday';
-    case 3: return 'Wednesday';
-    case 4: return 'Thursday';
-    case 5: return 'Friday';
-    case 6: return 'Saturday';
+    case 0: return 'Sun';
+    case 1: return 'Mon';
+    case 2: return 'Tue';
+    case 3: return 'Wed';
+    case 4: return 'Thu';
+    case 5: return 'Fri';
+    case 6: return 'Sat';
     default: return `Day ${dayOfWeek}`;
   }
 }
 
-function parseTimeToMinutes(t) {
-  if (!t || typeof t !== 'string' || !t.includes(':')) return NaN;
-  const [hh, mm] = t.split(':').map((x) => Number(x));
-  if (!Number.isFinite(hh) || !Number.isFinite(mm)) return NaN;
-  return hh * 60 + mm;
+function formatTime(timeStr) {
+  if (!timeStr) return '';
+  const [hours, minutes] = timeStr.split(':');
+  const h = parseInt(hours, 10);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const h12 = h % 12 || 12;
+  return `${h12}:${minutes} ${ampm}`;
 }
 
-function normalizeSlot(slot) {
-  return {
-    dayOfWeek: Number(slot.dayOfWeek),
-    startTime: String(slot.startTime),
-    endTime: String(slot.endTime),
-  };
-}
-
-function sortSlots(slots) {
-  return (slots || [])
-    .map(normalizeSlot)
-    .filter((s) => Number.isFinite(s.dayOfWeek) && s.dayOfWeek >= 0 && s.dayOfWeek <= 6)
-    .sort((a, b) => {
-      if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
-      return parseTimeToMinutes(a.startTime) - parseTimeToMinutes(b.startTime);
-    });
-}
-
-function slotKey(s) {
-  return `${s.dayOfWeek}|${s.startTime}|${s.endTime}`;
+function getStatusPillClass(status) {
+  switch (status) {
+    case 'confirmed': return 'pill-success';
+    case 'canceled': return 'pill-muted';
+    case 'scheduled': return 'pill-patient';
+    default: return '';
+  }
 }
 
 function patientCard(p) {
@@ -59,9 +49,18 @@ function patientCard(p) {
       <div class="row-between">
         <div>
           <div class="title">${escapeHtml(u.name || u.email)}</div>
-          <div class="muted">Emergency: ${escapeHtml(p.emergencyContact || '')}</div>
+          <div class="muted">${escapeHtml(u.email || '')}</div>
+          ${p.emergencyContact ? `<div class="muted">Emergency: ${escapeHtml(p.emergencyContact)}</div>` : ''}
         </div>
-        <button class="btn-secondary" data-mood-patient="${p.id}">View mood</button>
+        <button class="btn-secondary" data-mood-patient="${p.id}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+            <line x1="9" y1="9" x2="9.01" y2="9"></line>
+            <line x1="15" y1="9" x2="15.01" y2="9"></line>
+          </svg>
+          View Mood
+        </button>
       </div>
     </div>
   `;
@@ -71,81 +70,116 @@ export async function loadCounselorDashboard() {
   try {
     requireRole(state.me, 'counselor');
 
-    const [patients, availability] = await Promise.all([
+    const [patients, availability, appointments] = await Promise.all([
       api('/counselor/patients'),
       api('/counselor/availability'),
+      api('/counselor/appointments'),
     ]);
 
-    let draftSlots = sortSlots(availability);
+    // Calculate stats
+    const todayStr = new Date().toISOString().split('T')[0];
+    const todayAppointments = appointments.filter(a => a.appointmentDate === todayStr);
+    const upcomingAppointments = appointments.filter(a => a.appointmentDate >= todayStr && a.status !== 'canceled');
+    const totalSlots = availability.length;
 
-    const renderAvailabilityEditor = () => {
-      const rows = draftSlots.map((a) => {
-        const key = slotKey(a);
+    // Group availability by day for display
+    const slotsByDay = {};
+    availability.forEach(a => {
+      const day = Number(a.dayOfWeek);
+      if (!slotsByDay[day]) slotsByDay[day] = [];
+      slotsByDay[day].push(a);
+    });
+
+    const availabilitySummary = Object.entries(slotsByDay)
+      .sort(([a], [b]) => Number(a) - Number(b))
+      .map(([day, slots]) => `
+        <div class="avail-day-badge">
+          <strong>${toDayName(day)}</strong>
+          <span class="muted">${slots.length} slot${slots.length !== 1 ? 's' : ''}</span>
+        </div>
+      `).join('') || '<span class="muted">No availability set</span>';
+
+    // Recent appointments
+    const recentAppointments = appointments
+      .filter(a => a.status !== 'canceled')
+      .slice(0, 5)
+      .map(a => {
+        const patientName = a.patient ? (a.patient.name || a.patient.email) : 'Unknown';
         return `
-          <div class="avail-row">
+          <div class="appointment-row">
             <div>
-              <div class="title">${escapeHtml(toDayName(a.dayOfWeek))}</div>
-              <div class="muted">${escapeHtml(a.startTime)} - ${escapeHtml(a.endTime)}</div>
+              <div class="title">${escapeHtml(a.appointmentDate)} at ${formatTime(a.appointmentTime)}</div>
+              <div class="muted">${escapeHtml(patientName)}</div>
             </div>
-            <button class="btn-danger" data-remove-slot="${escapeHtml(key)}">Remove</button>
+            <span class="pill ${getStatusPillClass(a.status)}">${escapeHtml(a.status)}</span>
           </div>
         `;
-      }).join('') || '<div class="muted">No slots added yet.</div>';
-
-      return `
-        <div class="card">
-          <h3>My availability</h3>
-          <p class="muted">Add slots using a date picker. We save them as weekly availability (day of week).</p>
-
-          <div class="grid-3">
-            <div class="field">
-              <label>Date</label>
-              <input id="avail-date" type="date" />
-            </div>
-            <div class="field">
-              <label>Start time</label>
-              <input id="avail-start" type="time" />
-            </div>
-            <div class="field">
-              <label>End time</label>
-              <input id="avail-end" type="time" />
-            </div>
-          </div>
-
-          <div class="actions">
-            <button id="btn-add-slot">Add slot</button>
-            <button class="btn-secondary" id="btn-save-avail">Save availability</button>
-            <button class="btn-secondary" id="btn-reset-avail">Reset</button>
-          </div>
-
-          <div class="card" style="margin-top:1rem">
-            <h4>Current slots</h4>
-            <div class="avail-list">${rows}</div>
-          </div>
-        </div>
-      `;
-    };
+      }).join('') || '<p class="muted">No upcoming appointments</p>';
 
     renderMain(`
       <div class="card">
-        <h2>Counselor Dashboard</h2>
-        <p class="muted">Manage your availability, appointments, and view assigned patients.</p>
+        <h2>Welcome back, ${escapeHtml(state.me.name || 'Counselor')}</h2>
+        <p class="muted">Here's an overview of your practice.</p>
       </div>
 
-      <div id="avail-editor">${renderAvailabilityEditor()}</div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value">${patients.length}</div>
+          <div class="stat-label">Patients</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${todayAppointments.length}</div>
+          <div class="stat-label">Today's Sessions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${upcomingAppointments.length}</div>
+          <div class="stat-label">Upcoming</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${totalSlots}</div>
+          <div class="stat-label">Weekly Slots</div>
+        </div>
+      </div>
 
-      <h2>Assigned Patients</h2>
+      <div class="grid-2">
+        <div class="card">
+          <div class="row-between">
+            <h3>My Availability</h3>
+            <button class="btn-secondary" id="btn-manage-avail">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              Manage
+            </button>
+          </div>
+          <div class="avail-summary">
+            ${availabilitySummary}
+          </div>
+          <p class="hint">Patients can book appointments during your available slots.</p>
+        </div>
+
+        <div class="card">
+          <div class="row-between">
+            <h3>Recent Appointments</h3>
+            <button class="btn-secondary" id="btn-view-appts">View All</button>
+          </div>
+          <div class="appointment-list">
+            ${recentAppointments}
+          </div>
+        </div>
+      </div>
+
+      <h2>My Patients</h2>
       <div class="card">
-        <div class="grid-3">
+        <div class="search-bar">
           <div class="field">
             <label>Search</label>
-            <input id="patient-search" type="text" placeholder="Search name, email, emergency" />
+            <input id="patient-search" type="text" placeholder="Search by name, email..." />
           </div>
           <div class="field">
-            <label> </label>
             <button class="btn-secondary" id="patient-clear">Clear</button>
           </div>
-          <div class="field"></div>
         </div>
       </div>
       <div id="patient-list"></div>
@@ -153,85 +187,19 @@ export async function loadCounselorDashboard() {
       <div id="counselor-mood"></div>
     `);
 
+    // Bind navigation buttons
+    document.getElementById('btn-manage-avail').addEventListener('click', () => {
+      navigate('/counselor-availability');
+    });
+
+    document.getElementById('btn-view-appts').addEventListener('click', () => {
+      navigate('/counselor-appointments');
+    });
+
     const allPatients = patients || [];
     const listEl = document.getElementById('patient-list');
     const qEl = document.getElementById('patient-search');
     const clearEl = document.getElementById('patient-clear');
-
-    const bindAvailabilityEditor = () => {
-      const editor = document.getElementById('avail-editor');
-      if (!editor) return;
-
-      const rerender = () => {
-        editor.innerHTML = renderAvailabilityEditor();
-        bindAvailabilityEditor();
-      };
-
-      const btnAdd = document.getElementById('btn-add-slot');
-      const btnSave = document.getElementById('btn-save-avail');
-      const btnReset = document.getElementById('btn-reset-avail');
-      const dateEl = document.getElementById('avail-date');
-      const startEl = document.getElementById('avail-start');
-      const endEl = document.getElementById('avail-end');
-
-      btnAdd.addEventListener('click', () => {
-        try {
-          const dateStr = dateEl.value;
-          const startTime = startEl.value;
-          const endTime = endEl.value;
-
-          if (!dateStr) throw new Error('Select a date');
-          if (!startTime) throw new Error('Select a start time');
-          if (!endTime) throw new Error('Select an end time');
-
-          const s = parseTimeToMinutes(startTime);
-          const e = parseTimeToMinutes(endTime);
-          if (!Number.isFinite(s) || !Number.isFinite(e) || s >= e) {
-            throw new Error('End time must be after start time');
-          }
-
-          const dow = new Date(dateStr + 'T00:00:00').getDay();
-          const slot = normalizeSlot({ dayOfWeek: dow, startTime, endTime });
-          const key = slotKey(slot);
-          if (draftSlots.some((x) => slotKey(x) === key)) {
-            throw new Error('This slot is already added');
-          }
-
-          draftSlots = sortSlots([...draftSlots, slot]);
-          dateEl.value = '';
-          startEl.value = '';
-          endEl.value = '';
-          rerender();
-        } catch (e) {
-          renderError(e);
-        }
-      });
-
-      btnSave.addEventListener('click', async () => {
-        try {
-          await api('/counselor/availability', { method: 'PUT', body: draftSlots });
-          toast('Availability saved', 'success');
-          await loadCounselorDashboard();
-        } catch (e) {
-          renderError(e);
-        }
-      });
-
-      btnReset.addEventListener('click', () => {
-        draftSlots = sortSlots(availability);
-        rerender();
-      });
-
-      document.querySelectorAll('[data-remove-slot]').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const key = btn.getAttribute('data-remove-slot');
-          draftSlots = draftSlots.filter((s) => slotKey(s) !== key);
-          rerender();
-        });
-      });
-    };
-
-    bindAvailabilityEditor();
 
     const bindMoodButtons = () => {
       document.querySelectorAll('#patient-list [data-mood-patient]').forEach((btn) => {
@@ -255,7 +223,22 @@ export async function loadCounselorDashboard() {
         return includesText(haystack, q);
       });
 
-      listEl.innerHTML = filtered.map(patientCard).join('') || '<div class="card">No patients match your search.</div>';
+      if (filtered.length === 0) {
+        listEl.innerHTML = `
+          <div class="empty-state">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            <h3>No patients found</h3>
+            <p>Patients will appear here once they're assigned to you.</p>
+          </div>
+        `;
+      } else {
+        listEl.innerHTML = filtered.map(patientCard).join('');
+      }
       bindMoodButtons();
     };
 
