@@ -9,30 +9,27 @@ function includesText(haystack, needle) {
   return h.includes(n);
 }
 
-function userCard(u) {
+function userRow(u) {
+  const activeLabel = u.active ? 'Active' : 'Inactive';
+  const specialty = u.specialty || '-';
+  
+  const rolePillClass = u.role === 'admin' ? 'pill-admin' : u.role === 'counselor' ? 'pill-counselor' : 'pill-patient';
+
   return `
-    <div class="card">
-      <div class="row-between">
-        <div>
-          <div class="title">${escapeHtml(u.name || u.email)}</div>
-          <div class="muted">${escapeHtml(u.email)}</div>
+    <tr>
+      <td>${escapeHtml(u.name || '-')}</td>
+      <td>${escapeHtml(u.email || '')}</td>
+      <td><span class="pill ${rolePillClass}">${escapeHtml(u.role)}</span></td>
+      <td>${escapeHtml(specialty)}</td>
+      <td><span class="pill ${u.active ? 'pill-success' : 'pill-muted'}">${escapeHtml(activeLabel)}</span></td>
+      <td>
+        <div class="actions" style="margin:0">
+          <button class="btn-secondary" data-edit-user="${u.id}">Edit</button>
+          <button class="btn-secondary" data-toggle-active="${u.id}" data-active="${u.active ? '1' : '0'}">${u.active ? 'Deactivate' : 'Activate'}</button>
+          <button class="btn-danger" data-delete-user="${u.id}" data-user-name="${escapeHtml(u.name || u.email)}">Delete</button>
         </div>
-        <div class="pill">${escapeHtml(u.role)}</div>
-      </div>
-
-      <div class="muted">Active: ${escapeHtml(u.active)}</div>
-
-      <div class="actions">
-        <select data-role-user="${u.id}">
-          <option value="patient" ${u.role === 'patient' ? 'selected' : ''}>patient</option>
-          <option value="counselor" ${u.role === 'counselor' ? 'selected' : ''}>counselor</option>
-          <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>admin</option>
-        </select>
-        <button class="btn-secondary" data-save-role="${u.id}">Change role</button>
-        <button class="btn-secondary" data-toggle-active="${u.id}" data-active="${u.active ? '1' : '0'}">${u.active ? 'Deactivate' : 'Activate'}</button>
-        <button class="btn-danger" data-delete-user="${u.id}">Delete</button>
-      </div>
-    </div>
+      </td>
+    </tr>
   `;
 }
 
@@ -40,9 +37,12 @@ export async function loadAdminUsers() {
   try {
     requireRole(state.me, 'admin');
 
-    const users = await api('/admin/users');
+    const [users, profileChanges] = await Promise.all([
+      api('/admin/users'),
+      api('/admin/profile-changes'),
+    ]);
 
-    const createCard = `
+    const createCounselorCard = `
       <div class="card">
         <h2>Create Counselor</h2>
         <div class="grid-3">
@@ -59,21 +59,79 @@ export async function loadAdminUsers() {
             <input id="create-c-password" type="password" />
           </div>
         </div>
+        <div class="field">
+          <label>Specialty (optional)</label>
+          <input id="create-c-specialty" type="text" placeholder="e.g. Anxiety, Teens, Trauma" />
+        </div>
         <div class="actions">
           <button id="btn-create-counselor">Create counselor</button>
         </div>
       </div>
     `;
 
+    const createAdminCard = `
+      <div class="card">
+        <h2>Create Admin</h2>
+        <div class="grid-3">
+          <div class="field">
+            <label>Name</label>
+            <input id="create-a-name" type="text" />
+          </div>
+          <div class="field">
+            <label>Email</label>
+            <input id="create-a-email" type="email" />
+          </div>
+          <div class="field">
+            <label>Temporary Password</label>
+            <input id="create-a-password" type="password" />
+          </div>
+        </div>
+        <div class="actions">
+          <button id="btn-create-admin">Create admin</button>
+        </div>
+      </div>
+    `;
+
+    const profileRows = (profileChanges || []).map((c) => {
+      return `
+        <tr>
+          <td>${escapeHtml(c.description || '')}</td>
+          <td>${escapeHtml(c.userRole || '')}</td>
+          <td>${escapeHtml(c.userName || c.userEmail || '')}</td>
+          <td>${escapeHtml(c.createdAt || '')}</td>
+        </tr>
+      `;
+    }).join('') || `<tr><td colspan="4" class="muted">No recent profile updates.</td></tr>`;
+
     renderMain(`
-      ${createCard}
+      <div class="grid-2">
+        ${createCounselorCard}
+        ${createAdminCard}
+      </div>
+
+      <h2>Recent profile updates</h2>
+      <div class="card">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th>Role</th>
+              <th>User</th>
+              <th>When</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${profileRows}
+          </tbody>
+        </table>
+      </div>
 
       <h2>Users</h2>
       <div class="card">
         <div class="grid-3">
           <div class="field">
             <label>Search</label>
-            <input id="au-search" type="text" placeholder="Search name, email" />
+            <input id="au-search" type="text" placeholder="Search name, email, role, specialty" />
           </div>
           <div class="field">
             <label>Role</label>
@@ -85,7 +143,7 @@ export async function loadAdminUsers() {
             </select>
           </div>
           <div class="field">
-            <label>Active</label>
+            <label>Status</label>
             <select id="au-active">
               <option value="all">all</option>
               <option value="active">active</option>
@@ -98,7 +156,67 @@ export async function loadAdminUsers() {
         </div>
       </div>
 
-      <div id="au-list"></div>
+      <div class="card">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Specialty</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="au-list"></tbody>
+        </table>
+      </div>
+
+      <!-- Edit User Modal -->
+      <div id="edit-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-content card">
+          <div class="row-between">
+            <h2>Edit User</h2>
+            <button class="btn-ghost modal-close" id="edit-modal-close">&times;</button>
+          </div>
+          <div class="field">
+            <label>Name</label>
+            <input id="edit-name" type="text" />
+          </div>
+          <div class="field">
+            <label>Email</label>
+            <input id="edit-email" type="email" />
+          </div>
+          <div class="field" id="edit-specialty-field">
+            <label>Specialty (for counselors)</label>
+            <input id="edit-specialty" type="text" placeholder="e.g. Anxiety, Depression, Trauma" />
+          </div>
+          <div class="field">
+            <label>Role</label>
+            <input id="edit-role" type="text" disabled class="muted" />
+            <p class="hint">Role cannot be changed</p>
+          </div>
+          <input type="hidden" id="edit-user-id" />
+          <div class="actions">
+            <button id="btn-save-edit" class="btn-primary">Save Changes</button>
+            <button id="btn-cancel-edit" class="btn-secondary">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delete Confirmation Modal -->
+      <div id="delete-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-content card">
+          <h2>Confirm Delete</h2>
+          <p>Are you sure you want to delete user <strong id="delete-user-name"></strong>?</p>
+          <p class="muted">This action cannot be undone.</p>
+          <input type="hidden" id="delete-user-id" />
+          <div class="actions">
+            <button id="btn-confirm-delete" class="btn-danger">Yes, Delete</button>
+            <button id="btn-cancel-delete" class="btn-secondary">Cancel</button>
+          </div>
+        </div>
+      </div>
     `);
 
     const allUsers = users || [];
@@ -108,12 +226,80 @@ export async function loadAdminUsers() {
     const activeEl = document.getElementById('au-active');
     const clearEl = document.getElementById('au-clear');
 
+    // Edit modal elements
+    const editModal = document.getElementById('edit-modal');
+    const editName = document.getElementById('edit-name');
+    const editEmail = document.getElementById('edit-email');
+    const editSpecialty = document.getElementById('edit-specialty');
+    const editSpecialtyField = document.getElementById('edit-specialty-field');
+    const editRole = document.getElementById('edit-role');
+    const editUserId = document.getElementById('edit-user-id');
+
+    // Delete modal elements
+    const deleteModal = document.getElementById('delete-modal');
+    const deleteUserName = document.getElementById('delete-user-name');
+    const deleteUserId = document.getElementById('delete-user-id');
+
+    // Close edit modal
+    document.getElementById('edit-modal-close').addEventListener('click', () => {
+      editModal.style.display = 'none';
+    });
+    document.getElementById('btn-cancel-edit').addEventListener('click', () => {
+      editModal.style.display = 'none';
+    });
+    editModal.addEventListener('click', (e) => {
+      if (e.target === editModal) editModal.style.display = 'none';
+    });
+
+    // Close delete modal
+    document.getElementById('btn-cancel-delete').addEventListener('click', () => {
+      deleteModal.style.display = 'none';
+    });
+    deleteModal.addEventListener('click', (e) => {
+      if (e.target === deleteModal) deleteModal.style.display = 'none';
+    });
+
+    // Save edit
+    document.getElementById('btn-save-edit').addEventListener('click', async () => {
+      try {
+        const id = editUserId.value;
+        const name = editName.value;
+        const email = editEmail.value;
+        const specialty = editSpecialty.value;
+        
+        await api(`/admin/users/${id}`, { 
+          method: 'PUT', 
+          body: { name, email, specialty } 
+        });
+        
+        toast('User updated successfully', 'success');
+        editModal.style.display = 'none';
+        await loadAdminUsers();
+      } catch (e) {
+        toast(e.message || 'Failed to update user', 'error');
+      }
+    });
+
+    // Confirm delete
+    document.getElementById('btn-confirm-delete').addEventListener('click', async () => {
+      try {
+        const id = deleteUserId.value;
+        await api(`/admin/users/${id}`, { method: 'DELETE' });
+        toast('User deleted', 'success');
+        deleteModal.style.display = 'none';
+        await loadAdminUsers();
+      } catch (e) {
+        toast(e.message || 'Failed to delete user', 'error');
+      }
+    });
+
     document.getElementById('btn-create-counselor').addEventListener('click', async () => {
       try {
         const name = document.getElementById('create-c-name').value;
         const email = document.getElementById('create-c-email').value;
         const password = document.getElementById('create-c-password').value;
-        await api('/admin/counselors', { method: 'POST', body: { name, email, password } });
+        const specialty = document.getElementById('create-c-specialty').value;
+        await api('/admin/counselors', { method: 'POST', body: { name, email, password, specialty } });
         toast('Counselor created', 'success');
         await loadAdminUsers();
       } catch (e) {
@@ -121,21 +307,41 @@ export async function loadAdminUsers() {
       }
     });
 
+    document.getElementById('btn-create-admin').addEventListener('click', async () => {
+      try {
+        const name = document.getElementById('create-a-name').value;
+        const email = document.getElementById('create-a-email').value;
+        const password = document.getElementById('create-a-password').value;
+        await api('/admin/admins', { method: 'POST', body: { name, email, password } });
+        toast('Admin created', 'success');
+        await loadAdminUsers();
+      } catch (e) {
+        renderError(e);
+      }
+    });
+
     const bindUserActions = () => {
-      document.querySelectorAll('#au-list [data-save-role]').forEach((btn) => {
-        btn.addEventListener('click', async () => {
-          try {
-            const id = btn.getAttribute('data-save-role');
-            const sel = document.querySelector(`select[data-role-user="${id}"]`);
-            await api(`/admin/users/${id}/role`, { method: 'POST', body: { role: sel.value } });
-            toast('Role updated', 'success');
-            await loadAdminUsers();
-          } catch (e) {
-            renderError(e);
-          }
+      // Edit buttons
+      document.querySelectorAll('#au-list [data-edit-user]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-edit-user');
+          const user = allUsers.find(u => String(u.id) === id);
+          if (!user) return;
+
+          editUserId.value = user.id;
+          editName.value = user.name || '';
+          editEmail.value = user.email || '';
+          editSpecialty.value = user.specialty || '';
+          editRole.value = user.role || '';
+
+          // Show specialty field only for counselors
+          editSpecialtyField.style.display = user.role === 'counselor' ? 'block' : 'none';
+
+          editModal.style.display = 'flex';
         });
       });
 
+      // Toggle active buttons
       document.querySelectorAll('#au-list [data-toggle-active]').forEach((btn) => {
         btn.addEventListener('click', async () => {
           try {
@@ -150,18 +356,14 @@ export async function loadAdminUsers() {
         });
       });
 
+      // Delete buttons - show confirmation modal
       document.querySelectorAll('#au-list [data-delete-user]').forEach((btn) => {
-        btn.addEventListener('click', async () => {
-          try {
-            const id = btn.getAttribute('data-delete-user');
-            const ok = window.confirm('Delete this user?');
-            if (!ok) return;
-            await api(`/admin/users/${id}`, { method: 'DELETE' });
-            toast('User deleted', 'success');
-            await loadAdminUsers();
-          } catch (e) {
-            renderError(e);
-          }
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-delete-user');
+          const name = btn.getAttribute('data-user-name');
+          deleteUserId.value = id;
+          deleteUserName.textContent = name;
+          deleteModal.style.display = 'flex';
         });
       });
     };
@@ -178,11 +380,15 @@ export async function loadAdminUsers() {
           if (active === 'active' && !isActive) return false;
           if (active === 'inactive' && isActive) return false;
         }
-        const haystack = `${u.name || ''} ${u.email || ''} ${u.role || ''}`;
+        const haystack = `${u.name || ''} ${u.email || ''} ${u.role || ''} ${u.specialty || ''}`;
         return includesText(haystack, q);
       });
 
-      listEl.innerHTML = filtered.map(userCard).join('') || '<div class="card">No users match your search.</div>';
+      if (!filtered.length) {
+        listEl.innerHTML = `<tr><td colspan="6" class="muted">No users match your search.</td></tr>`;
+      } else {
+        listEl.innerHTML = filtered.map(userRow).join('');
+      }
       bindUserActions();
     };
 
