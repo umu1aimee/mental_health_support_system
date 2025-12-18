@@ -1654,3 +1654,168 @@ label {
   padding: 0.4rem 0.75rem;
   font-size: 0.85rem;
 }
+
+/* ========== COUNSELOR SELECTION GRID ========== */
+.counselor-select-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.counselor-select-card {
+  background: var(--glass-bg);
+  border: 2px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.counselor-select-card:hover {
+  border-color: var(--accent-1);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.counselor-select-card.selected {
+  border-color: var(--accent-1);
+  background: rgba(99, 179, 237, 0.1);
+}
+
+.counselor-select-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.counselor-name {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+}
+
+.counselor-specialty {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* Weekly Schedule Display */
+.counselor-week-schedule {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: var(--surface-1);
+  border-radius: 10px;
+}
+
+.week-day {
+  text-align: center;
+  padding: 0.5rem 0.25rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+}
+
+.week-day.available {
+  background: rgba(104, 211, 145, 0.15);
+}
+
+.week-day.unavailable {
+  background: var(--surface-2);
+  opacity: 0.6;
+}
+
+.week-day.today {
+  border: 2px solid var(--accent-1);
+}
+
+.week-day-name {
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.week-day-time {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+}
+
+.week-day.available .week-day-time {
+  color: var(--accent-success);
+}
+
+.btn-select-counselor {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+/* Booking Card */
+.booking-card {
+  border: 2px solid var(--accent-1);
+  background: rgba(99, 179, 237, 0.05);
+}
+
+/* Availability Notice */
+.availability-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 12px;
+  margin: 1rem 0;
+}
+
+.availability-notice.available {
+  background: rgba(104, 211, 145, 0.15);
+  border: 1px solid rgba(104, 211, 145, 0.3);
+  color: var(--accent-success);
+}
+
+.availability-notice.unavailable {
+  background: rgba(252, 129, 129, 0.15);
+  border: 1px solid rgba(252, 129, 129, 0.3);
+  color: var(--accent-danger);
+}
+
+.availability-notice strong {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.availability-notice p {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+/* Time Slots */
+.time-slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.time-slot-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: var(--surface-1);
+  border: 1px solid var(--glass-border);
+  color: var(--text-color);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.time-slot-btn:hover {
+  background: var(--surface-2);
+  border-color: var(--accent-1);
+}
+
+.time-slot-btn.selected {
+  background: var(--accent-1);
+  border-color: var(--accent-1);
+  color: #fff;
+}

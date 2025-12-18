@@ -15,6 +15,12 @@ import { loadCounselorAppointments } from './pages/counselorAppointments.js';
 import { loadCounselorAvailability } from './pages/counselorAvailability.js';
 import { loadAdminUsers } from './pages/adminUsers.js';
 import { loadUserProfile } from './pages/userProfile.js';
+import { loadContact } from './pages/contact.js';
+import { loadHelpCenter } from './pages/helpCenter.js';
+import { loadPrivacyPolicy } from './pages/privacyPolicy.js';
+import { loadTerms } from './pages/terms.js';
+import { loadHipaa } from './pages/hipaa.js';
+import { loadCrisis } from './pages/crisis.js';
 
 function setUserStatus() {
   const el = document.getElementById('user-status');
@@ -179,6 +185,38 @@ function initNav() {
       }
     });
   }
+
+  // Footer links
+  const on = (id, handler) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('click', (e) => {
+      // Let tel: links work normally
+      if (el.getAttribute('href') && el.getAttribute('href').startsWith('tel:')) return;
+      e.preventDefault();
+      handler();
+    });
+  };
+
+  on('footer-platform-resources', () => navigate('/landing?section=resources'));
+  on('footer-platform-patient', () => {
+    if (!state.me || !state.me.authenticated) return navigate('/login');
+    if (state.me.role !== 'patient') return navigate('/');
+    return navigate('/patient');
+  });
+  on('footer-platform-counselor', () => {
+    if (!state.me || !state.me.authenticated) return navigate('/login');
+    if (state.me.role !== 'counselor') return navigate('/');
+    return navigate('/counselor');
+  });
+
+  on('footer-support-help', () => navigate('/help'));
+  on('footer-support-contact', () => navigate('/contact'));
+  on('footer-support-crisis', () => navigate('/crisis'));
+
+  on('footer-legal-privacy', () => navigate('/privacy'));
+  on('footer-legal-terms', () => navigate('/terms'));
+  on('footer-legal-hipaa', () => navigate('/hipaa'));
 }
 
 async function refreshMe() {
@@ -212,6 +250,12 @@ function defineRoutes() {
 
   // Common routes
   defineRoute('/profile', async () => loadUserProfile());
+  defineRoute('/contact', async () => loadContact());
+  defineRoute('/help', async () => loadHelpCenter());
+  defineRoute('/privacy', async () => loadPrivacyPolicy());
+  defineRoute('/terms', async () => loadTerms());
+  defineRoute('/hipaa', async () => loadHipaa());
+  defineRoute('/crisis', async () => loadCrisis());
 
   defineRoute('/404', async () => {
     document.getElementById('main-content').innerHTML = '<div class="card"><h2>Not found</h2></div>';

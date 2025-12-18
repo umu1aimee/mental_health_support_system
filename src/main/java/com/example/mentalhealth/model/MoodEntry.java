@@ -17,7 +17,7 @@ public class MoodEntry {
     @Column(nullable = false)
     private int rating;
 
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String notes;
 
     @Column(name = "entry_date", nullable = false)
