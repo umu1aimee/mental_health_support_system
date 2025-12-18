@@ -3,14 +3,18 @@ import { state, setState, subscribe } from './state.js';
 import { userBadge } from './components.js';
 import { renderError, toast } from './ui.js';
 import { defineRoute, runRoute, startRouter, navigate } from './router.js';
-import { loadAuth, logout } from './pages/auth.js';
+import { loadLogin, loadRegister, logout } from './pages/auth.js';
 import { routeDefault } from './pages/routeDefault.js';
 import { loadLanding } from './pages/landing.js';
+import { loadPatientDashboard } from './pages/patientDashboard.js';
 import { loadPatientMood } from './pages/patientMood.js';
 import { loadPatientAppointments } from './pages/patientAppointments.js';
+import { loadPatientCounselors } from './pages/patientCounselors.js';
 import { loadCounselorDashboard } from './pages/counselorDashboard.js';
 import { loadCounselorAppointments } from './pages/counselorAppointments.js';
+import { loadCounselorAvailability } from './pages/counselorAvailability.js';
 import { loadAdminUsers } from './pages/adminUsers.js';
+import { loadUserProfile } from './pages/userProfile.js';
 
 function setUserStatus() {
   const el = document.getElementById('user-status');
@@ -39,13 +43,19 @@ function setUserStatus() {
 
   const role = state.me && state.me.authenticated ? state.me.role : null;
 
-  document.getElementById('nav-mood').closest('li').style.display = role === 'patient' ? '' : 'none';
-  document.getElementById('nav-appointments').closest('li').style.display = role === 'patient' ? '' : 'none';
-
-  document.getElementById('nav-counselor').closest('li').style.display = role === 'counselor' ? '' : 'none';
-  document.getElementById('nav-counselor-appts').closest('li').style.display = role === 'counselor' ? '' : 'none';
-
-  document.getElementById('nav-admin').closest('li').style.display = role === 'admin' ? '' : 'none';
+  // Show/hide role-specific navigation items
+  document.querySelectorAll('.nav-patient').forEach(el => {
+    el.style.display = role === 'patient' ? '' : 'none';
+  });
+  document.querySelectorAll('.nav-counselor').forEach(el => {
+    el.style.display = role === 'counselor' ? '' : 'none';
+  });
+  document.querySelectorAll('.nav-admin').forEach(el => {
+    el.style.display = role === 'admin' ? '' : 'none';
+  });
+  document.querySelectorAll('.nav-auth').forEach(el => {
+    el.style.display = isAuthed ? '' : 'none';
+  });
 }
 
 function initNav() {
@@ -57,12 +67,25 @@ function initNav() {
         toast('Logged out', 'success');
         navigate('/landing');
       } else {
-        navigate('/auth');
+        navigate('/login');
       }
     } catch (err) {
       renderError(err);
     }
   });
+
+  // Brand link
+  const brandLink = document.getElementById('brand-link');
+  if (brandLink) {
+    brandLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (state.me && state.me.authenticated) {
+        navigate('/');
+      } else {
+        navigate('/landing');
+      }
+    });
+  }
 
   const navSolutions = document.getElementById('nav-solutions');
   const navResources = document.getElementById('nav-resources');
@@ -90,9 +113,15 @@ function initNav() {
   if (navCta) {
     navCta.addEventListener('click', (e) => {
       e.preventDefault();
-      navigate('/auth');
+      navigate('/register');
     });
   }
+
+  // Patient navigation
+  document.getElementById('nav-patient-dashboard').addEventListener('click', (e) => {
+    e.preventDefault();
+    navigate('/patient');
+  });
 
   document.getElementById('nav-mood').addEventListener('click', (e) => {
     e.preventDefault();
@@ -104,6 +133,12 @@ function initNav() {
     navigate('/appointments');
   });
 
+  document.getElementById('nav-counselors').addEventListener('click', (e) => {
+    e.preventDefault();
+    navigate('/counselors');
+  });
+
+  // Counselor navigation
   document.getElementById('nav-counselor').addEventListener('click', (e) => {
     e.preventDefault();
     navigate('/counselor');
@@ -114,9 +149,21 @@ function initNav() {
     navigate('/counselor-appointments');
   });
 
+  document.getElementById('nav-availability').addEventListener('click', (e) => {
+    e.preventDefault();
+    navigate('/counselor-availability');
+  });
+
+  // Admin navigation
   document.getElementById('nav-admin').addEventListener('click', (e) => {
     e.preventDefault();
     navigate('/admin');
+  });
+
+  // Common navigation
+  document.getElementById('nav-profile').addEventListener('click', (e) => {
+    e.preventDefault();
+    navigate('/profile');
   });
 
   const logoutBtn = document.getElementById('topbar-logout');
@@ -144,15 +191,27 @@ function defineRoutes() {
 
   defineRoute('/landing', async ({ params }) => loadLanding({ params }));
 
-  defineRoute('/auth', async () => loadAuth());
+  // Auth routes
+  defineRoute('/auth', async () => loadLogin());
+  defineRoute('/login', async () => loadLogin());
+  defineRoute('/register', async () => loadRegister());
 
+  // Patient routes
+  defineRoute('/patient', async () => loadPatientDashboard());
   defineRoute('/mood', async () => loadPatientMood());
   defineRoute('/appointments', async () => loadPatientAppointments());
+  defineRoute('/counselors', async () => loadPatientCounselors());
 
+  // Counselor routes
   defineRoute('/counselor', async () => loadCounselorDashboard());
   defineRoute('/counselor-appointments', async () => loadCounselorAppointments());
+  defineRoute('/counselor-availability', async () => loadCounselorAvailability());
 
+  // Admin routes
   defineRoute('/admin', async () => loadAdminUsers());
+
+  // Common routes
+  defineRoute('/profile', async () => loadUserProfile());
 
   defineRoute('/404', async () => {
     document.getElementById('main-content').innerHTML = '<div class="card"><h2>Not found</h2></div>';
