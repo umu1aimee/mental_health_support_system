@@ -8,7 +8,7 @@ export function routeDefault() {
     return;
   }
   if (me.role === 'patient') {
-    navigate('/mood');
+    navigate('/patient');
     return;
   }
   if (me.role === 'counselor') {
