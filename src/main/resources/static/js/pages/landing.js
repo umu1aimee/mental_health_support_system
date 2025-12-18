@@ -108,8 +108,8 @@ export async function loadLanding({ params } = {}) {
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  document.getElementById('btn-hero-login').addEventListener('click', () => navigate('/auth'));
-  document.getElementById('btn-cta-login').addEventListener('click', () => navigate('/auth'));
+  document.getElementById('btn-hero-login').addEventListener('click', () => navigate('/login'));
+  document.getElementById('btn-cta-login').addEventListener('click', () => navigate('/login'));
   document.getElementById('btn-hero-demo').addEventListener('click', () => {
     navigate('/landing?section=solutions');
   });
