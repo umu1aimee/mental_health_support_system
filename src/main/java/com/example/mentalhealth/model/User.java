@@ -21,6 +21,9 @@ public class User {
     @Column(length = 100)
     private String name;
 
+    @Column(length = 100)
+    private String specialty;
+
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
     private Role role;
@@ -74,6 +77,14 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getSpecialty() {
+        return specialty;
+    }
+
+    public void setSpecialty(String specialty) {
+        this.specialty = specialty;
     }
 
     public Role getRole() {
