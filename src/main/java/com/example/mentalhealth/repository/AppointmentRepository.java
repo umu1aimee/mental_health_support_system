@@ -16,6 +16,12 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     boolean existsByCounselorAndAppointmentDateAndAppointmentTimeAndStatusNot(User counselor, LocalDate appointmentDate, LocalTime appointmentTime, String status);
 
+    /**
+     * Used for authorization checks: a counselor may view details for patients who have booked with them.
+     * Prefer excluding canceled appointments to avoid leaking information after cancellation.
+     */
+    boolean existsByCounselorAndPatientAndStatusNot(User counselor, Patient patient, String status);
+
     void deleteByPatient(Patient patient);
 
     void deleteByCounselor(User counselor);

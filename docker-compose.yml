@@ -1,0 +1,44 @@
+name: mindcare
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: mindcaremini
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: aimee1234
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/mindcaremini
+      DB_USERNAME: postgres
+      DB_PASSWORD: aimee1234
+      DB_DRIVER: org.postgresql.Driver
+      ADMIN_EMAIL: admin@mindcare.local
+      ADMIN_PASSWORD: admin123
+      ADMIN_NAME: Default Admin
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    depends_on:
+      - backend
+    ports:
+      - "8081:80"
+
+volumes:
+  db_data:
+
+

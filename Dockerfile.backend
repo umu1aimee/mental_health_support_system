@@ -1,0 +1,34 @@
+## Backend (Spring Boot) container
+## Build: docker build -f Dockerfile.backend -t mindcare-backend .
+
+# ---- Build stage ----
+FROM eclipse-temurin:17-jdk AS build
+WORKDIR /app
+
+# Cache deps first
+COPY pom.xml ./
+COPY mvnw ./
+COPY mvnw.cmd ./
+COPY .mvn .mvn
+RUN chmod +x mvnw && ./mvnw -q -DskipTests dependency:go-offline
+
+# Build application
+COPY src ./src
+RUN ./mvnw -q -DskipTests package
+
+# ---- Runtime stage ----
+FROM eclipse-temurin:17-jre
+WORKDIR /app
+
+# Spring Boot listens on 8080 by default in application.properties
+EXPOSE 8080
+
+# Copy the fat jar
+COPY --from=build /app/target/*.jar /app/app.jar
+
+# Reasonable defaults; can be overridden by docker-compose env vars
+ENV JAVA_OPTS=""
+
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]
+
+

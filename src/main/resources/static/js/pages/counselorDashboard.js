@@ -76,6 +76,10 @@ export async function loadCounselorDashboard() {
       api('/counselor/appointments'),
     ]);
 
+    // Best-practice note:
+    // `/counselor/patients` is intentionally a "working set" of patients for this counselor:
+    // it includes both assigned patients and patients who have booked an appointment with this counselor.
+
     // Calculate stats
     const todayStr = new Date().toISOString().split('T')[0];
     const todayAppointments = appointments.filter(a => a.appointmentDate === todayStr);

@@ -43,18 +43,56 @@ public class CounselorApiController {
 
     @GetMapping("/patients")
     public List<Map<String, Object>> myPatients(HttpSession session) {
+        /**
+         * Best-practice note:
+         * A counselor's "My Patients" should reflect real interactions.
+         *
+         * We include:
+         * - Patients explicitly assigned to this counselor (admin workflow)
+         * - Patients who booked an appointment with this counselor (patient workflow)
+         *
+         * Deduping is done by patient id while preserving a stable order.
+         */
         User counselor = auth.requireRole(session, User.Role.counselor);
-        return patientRepository.findByAssignedCounselor(counselor)
-                .stream()
-                .map(this::patientSummary)
-                .toList();
+
+        // Preserve insertion order (assigned first, then booked).
+        Map<Long, Patient> unique = new LinkedHashMap<>();
+
+        for (Patient p : patientRepository.findByAssignedCounselor(counselor)) {
+            if (p != null && p.getId() != null) {
+                unique.putIfAbsent(p.getId(), p);
+            }
+        }
+
+        for (Appointment ap : appointmentRepository.findByCounselorOrderByAppointmentDateAscAppointmentTimeAsc(counselor)) {
+            Patient p = ap.getPatient();
+            if (p != null && p.getId() != null) {
+                unique.putIfAbsent(p.getId(), p);
+            }
+        }
+
+        return unique.values().stream().map(this::patientSummary).toList();
     }
 
     @GetMapping("/patients/{patientId}/mood")
     public List<Map<String, Object>> patientMood(@PathVariable Long patientId, HttpSession session) {
         User counselor = auth.requireRole(session, User.Role.counselor);
         Patient patient = patientRepository.findById(patientId).orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Patient not found"));
-        if (patient.getAssignedCounselor() == null || patient.getAssignedCounselor().getId() == null || !patient.getAssignedCounselor().getId().equals(counselor.getId())) {
+        /**
+         * Authorization rule:
+         * Counselors can view mood entries when there is an active care relationship.
+         *
+         * Relationship is true if:
+         * - Patient is assigned to the counselor (admin workflow), OR
+         * - Patient has booked at least one non-canceled appointment with this counselor (patient workflow).
+         */
+        boolean assigned = patient.getAssignedCounselor() != null
+                && patient.getAssignedCounselor().getId() != null
+                && patient.getAssignedCounselor().getId().equals(counselor.getId());
+
+        boolean booked = appointmentRepository.existsByCounselorAndPatientAndStatusNot(counselor, patient, "canceled");
+
+        if (!assigned && !booked) {
             throw new ApiException(HttpStatus.FORBIDDEN, "Access denied");
         }
         return moodEntryRepository.findByPatientOrderByEntryDateAsc(patient)

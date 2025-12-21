@@ -122,6 +122,52 @@ Then open:
 
 ---
 
+## Docker (frontend + backend + postgres)
+
+This repo includes:
+- `Dockerfile.backend` — builds & runs the Spring Boot app
+- `Dockerfile.frontend` + `docker/nginx.conf` — serves the SPA and proxies `/api/*` to the backend
+- `docker-compose.yml` — runs Postgres + backend + frontend together
+
+### Run with Docker Compose (local)
+
+From the project root:
+
+```bash
+docker compose up --build
+```
+
+Open in your browser:
+- Frontend (recommended): `http://localhost:8081`
+- Backend direct (optional): `http://localhost:8080` (also serves the SPA because Spring Boot has static files)
+
+Default admin credentials (from `docker-compose.yml` / `application.properties`):
+- Email: `admin@mindcare.local`
+- Password: `admin123`
+
+### Stop containers
+
+```bash
+docker compose down
+```
+
+### Run “online docker” (Play with Docker)
+
+You can run the same `docker-compose.yml` in an online Docker playground:
+
+1) Open Play with Docker: `https://labs.play-with-docker.com/`
+2) Start a session → click **Add New Instance**
+3) Upload/clone your repo into that instance (e.g., `git clone ...`)
+4) In the repo folder run:
+
+```bash
+docker compose up --build
+```
+
+5) In Play with Docker, click **Open Port** and open:
+- `8081` for the frontend (best)
+
+
 ## Common API routes (overview)
 
 ### Auth
